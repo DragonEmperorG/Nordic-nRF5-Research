@@ -127,7 +127,6 @@ $\bigstar$ 强制安装项
 $\star$ \href{http://www2.keil.com/mdk5/}{Keil MDK-ARM Development Kit}
 
 ARM Keil MDK 包括 ARM C/C++ 编译器以及 µVision IDE。官网上免费下载的 MDK-Lite edition 版本会限制代码大小为 32Kbyte，所以暂时使用破解版µVision V5.23.0.0 IDE，使用 MDK-ARM Professional 许可，安装包包括 IDE 本体和注册机。
-
 \begin{figure}[htbp]
 \centering
   \includegraphics[width=1.0\textwidth]{ARMKeilMDKInstaller.png}
@@ -135,19 +134,95 @@ ARM Keil MDK 包括 ARM C/C++ 编译器以及 µVision IDE。官网上免费下�
   \label{fig:ARMKeilMDKInstaller}
 \end{figure}
 
-按照正常流程安装 IDE 本体，安装完本体之后
+按照正常流程安装 IDE 本体，安装完本体之后需要耐心等待一段时间更新下载相关的依赖，由于网络相关限制会出现更新下载超时的情况，需要手动点击继续保持持续更新。更新完之后可以看到 Nordic Semiconductor 公司的系列芯片设备及其对应的开发包。
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{ARMKeilPackInstaller.png}
+  \caption{ARM Keil Software Packs 依赖包管理}
+  \label{fig:ARMKeilPackInstaller}
+\end{figure}
+
+更新完相关依赖后使用注册机破解软件。首先 \textbf{以管理员身份运行} Keil uVision5，在文件菜单栏里打开许可证管理对话框；打开注册机；将 Computer ID 复制到 Keil Generic Keygen 对应的编辑栏中，Target 选择 ARM， 许可证选择 MDK Professional， 点击 Generate 按钮，生成 License ID Code（LIC）； 将生成的许可证编号添加到许可证管理中，显示 Expires: Dec 2020，完成软件破解。
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{ARMKeilMDKCracker1.png}
+  \caption{ARM Keil 软件破解流程之打开License Management}
+  \label{fig:ARMKeilMDKCracker1}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{ARMKeilMDKCracker2.png}
+  \caption{软件破解流程之注册机生成LIC}
+  \label{fig:ARMKeilMDKCracker2}
+\end{figure}
 
 $\star$ \href{https://developer.nordicsemi.com/}{nRF5 SDK}
 
+nRF5 SDK 不需要安装，只需要在\href{https://www.nordicsemi.com/Software-and-Tools/Software/nRF5-SDK}{官方下载页面}下载最新的 SDK 即可，下载完毕之后解压出来即可使用。注意事项：nRF5 SDK 可能需要代理并且在网络状况较好的情况下才能完整下载下来；注意 SDK 解压出的文件夹的位置，因为 nRF5 SDK 中本身示例程序的文件路径较长，可能会导致编译器出现错误，所以尽量将 SDK 放置在靠近根目录的位置，避免路径中出现空格和中文字符。
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{nRF5SDKDownload.png}
+  \caption{nRF5 SDK 下载}
+  \label{fig:nRF5SDKDownload}
+\end{figure}
+
 $\star$ \href{https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF5-Command-Line-Tools/Download#infotabs}{nRF5x Command Line Tools (including nrfjprog)}
+
+nRF5x Command Line Tools 用于开发、编程和调试 Nordic Semiconductor 公司的 nRF5x 系列 SoCs。同样在\href{https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools/Download}{官方下载页面}下载对应操作系统的安装包，按照安装指引完成 nRF 命令行工具的安装。在 Powershell 中输入命令 \textit{nrfjprog --version}，验证 nrfjprog 安装正确。
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{nRFCLTDownload.png}
+  \caption{nRF Command Line Tools 下载}
+  \label{fig:nRFCLTDownload}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{nRFCLTValidation.png}
+  \caption{nRF Command Line Tools 验证安装}
+  \label{fig:nRFCLTValidation}
+\end{figure}
 
 $\bigstar$ 可选安装项
 
-\subsection{编写嵌入式程序（Programming an application）}
+\subsection{\href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Finstall_nrf5_sdk.html}{编写嵌入式程序（Programming an application）}}
 
-\subsection{建立开发板通讯（Communicating with the board）}
+完成上节工具链配置后就可以开始嵌入式程序的编写，在 Windows 平台，本节采用图形界面烧制程序。嵌入式程序的烧制大致分为以下四个步骤。
 
-\subsection{测试嵌入式程序（Testing the application）}
+$\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Ferase_board.html}{擦除开发板（Erasing the board）}
+
+官方教程给出可以通过命令行或者 nRFgo Studio 擦除闪存，但是打开 nRFgo Studio 并没有在Device Manager里找到自定义开发版的信息，所以暂时没有办法采用该方式擦除闪存。在叶博的指导下，通过 J-Link 软件包中的 J-Flash Lite 软件可以确实擦除闪存。
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{J-LinkSoftwareDownload.png}
+  \caption{J-Link 软件包下载}
+  \label{fig:J-LinkSoftwareDownload}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}[htbp]{1.0\textwidth}
+	\centering
+		\includegraphics[width=.9\textwidth]{SEGGERJ-FlashLiteV6_46j.png}
+		\label{fig:SEGGERJ-FlashLiteV6.46j}
+		\includegraphics[width=.9\textwidth]{SEGGERJ-FlashLiteV6_46j-EraseChip.png}
+		\label{fig:SEGGERJ-FlashLiteV6.46j-EraseChip}
+	\end{subfigure}
+	\caption{SEGGER J-Flash Lite V6.46j 擦除闪存}
+	\label{fig:SEGGERJ-FlashLite}
+\end{figure}
+
+$\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Fcompile_keil.html}{编译应用程序（Compiling the application）}
+
+在 nRF5 SDK 中提供了 Keil µVision 示例程序，根据自定义板卡的基础配置，进行简单的配置修改即可完成嵌入式程序的编译。对于基于 nRF52811 芯片的开发，还需要参考对应这款芯片的 \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fstruct_nrf52\%2Fstruct\%2Fnrf52811.html&cp=3_2}{开发文档 Developing for nRF52811}。
+
+$\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Fprogram_sd.html}{烧制蓝牙协议栈（Programming the SoftDevice）}
+
+$\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Fprogram_app_keil.html}{烧制应用程序（Programming the application）}
+
+\subsection{\href{}{建立开发板通讯（Communicating with the board）}}
+
+\subsection{\href{}{测试嵌入式程序（Testing the application）}}
 
 %%%=== 参考文献 ========%%%
 \cleardoublepage\phantomsection
