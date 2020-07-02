@@ -203,9 +203,9 @@ $\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_ke
 	\centering
 	\begin{subfigure}[htbp]{1.0\textwidth}
 	\centering
-		\includegraphics[width=.9\textwidth]{SEGGERJ-FlashLiteV6_46j.png}
+		\includegraphics[width=.9\textwidth]{SEGGERJ-FlashLiteV6-46j.png}
 		\label{fig:SEGGERJ-FlashLiteV6.46j}
-		\includegraphics[width=.9\textwidth]{SEGGERJ-FlashLiteV6_46j-EraseChip.png}
+		\includegraphics[width=.9\textwidth]{SEGGERJ-FlashLiteV6-46j-EraseChip.png}
 		\label{fig:SEGGERJ-FlashLiteV6.46j-EraseChip}
 	\end{subfigure}
 	\caption{SEGGER J-Flash Lite V6.46j 擦除闪存}
@@ -214,15 +214,50 @@ $\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_ke
 
 $\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Fcompile_keil.html}{编译应用程序（Compiling the application）}
 
-在 nRF5 SDK 中提供了 Keil µVision 示例程序，根据自定义板卡的基础配置，进行简单的配置修改即可完成嵌入式程序的编译。对于基于 nRF52811 芯片的开发，还需要参考对应这款芯片的 \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fstruct_nrf52\%2Fstruct\%2Fnrf52811.html&cp=3_2}{开发文档 Developing for nRF52811}。
+在 nRF5 SDK 中提供了 Keil µVision 示例程序，根据自定义板卡的基础配置，进行简单的配置修改即可完成嵌入式程序的编译。对于基于 nRF52811 芯片的开发，还需要参考对应这款芯片的 \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fstruct_nrf52\%2Fstruct\%2Fnrf52811.html&cp=3_2}{开发文档 Developing for nRF52811}。在 SDK 中包含官方提供的针对不同板卡和蓝牙协议栈的示例工程代码，存放在以下路径。
+
+{\setmainfont{Courier New Italic}                          % 设置代码字体                   
+\begin{lstlisting}
+SDK_dir\examples\ble_peripheral\ble_app_uart\board\SoftDevice
+\arm5_no_packs
+\end{lstlisting}}
+
+官方教程选用了 \textit{ble\textunderscore app\textunderscore uart} 作为示例，对于 nRF52811 开发板，打开下面路径下的工程文件 \textit{ble\textunderscore app\textunderscore uart\textunderscore pca10056e\textunderscore s112.uvprojx}，如果 IDE 提示安装 \textit{nRF\textunderscore DeviceFamilyPack} 的相关依赖，选择接收并安装 \textit{Device Family Pack}。
+
+{\setmainfont{Courier New Italic}                          % 设置代码字体                   
+\begin{lstlisting}
+SDK_dir\examples\ble_peripheral\ble_app_uart\pca10056e\s112
+\arm5_no_packs
+\end{lstlisting}}
+
+在 nRF52811 的开发文档中提到， nRF SDK中，目前并没有为 nRF52811 提供专门的开发包，需要用 nRF52840 的开发包模拟 nRF52811 上的相关功能，进而完成 nRF52811 的开发。从 nRF SDK V15.3.0 开始，支持 nRF52811 SoC 在 PCA10056 开发板上进行开发（原本是 nRF52840 对应的开发板），即可以将 nRF52811 视为 nRF52840 的子集，相比 nRF52840，nRF52811 开发板上的资源相对受限，内存、闪存和外围设备资源更少，所以在进行开发时需要对预设的开发板配置进行修改，从而使得程序能够原生的运行在 nRF52811 开发板上。这里要特别注意的是示例程序是以 pca10056 开发板作为配置电路板，需要根据自己构建的板卡重新定义相关引脚，从而使得 UART 串口能正常通信。
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{PCA10056PIN.png}
+  \caption{PCA10056 适配自定义引脚}
+  \label{fig:PCA10056PIN}
+\end{figure}
 
 $\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Fprogram_sd.html}{烧制蓝牙协议栈（Programming the SoftDevice）}
 
+如果编写的嵌入式程序中使用了 Bluetooth\textsuperscript{\textregistered} 或者 ANT\textsuperscript{\texttrademark}，这里需要重点强调，在烧制嵌入式程序之前，需要首先将蓝牙协议栈烧制进板卡中，在 Keil 中切换烧制对象，点击下载（LOAD）按钮，即可完成蓝牙协议栈的烧制。
+\begin{figure}[htbp]
+\centering
+  \includegraphics[width=1.0\textwidth]{FlashSoftDevice.png}
+  \caption{烧制蓝牙协议栈}
+  \label{fig:FlashSoftDevice}
+\end{figure}
+
 $\bigstar$ \href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Fprogram_app_keil.html}{烧制应用程序（Programming the application）}
 
-\subsection{\href{}{建立开发板通讯（Communicating with the board）}}
+同烧制蓝牙协议栈类似，在完成嵌入式程序编译后，将烧制目标切换为对应芯片，点击下载（LOAD）按钮，即可完成应用程序的烧制。
 
-\subsection{\href{}{测试嵌入式程序（Testing the application）}}
+\subsection{\href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Fcommunicate.html&cp=1_1_1_8}{建立开发板通讯（Communicating with the board）}}
+
+为了在电脑上显示应用程序开发中的打印信息或者向应用程序发送指令，需要与开发板进行通讯。官方建议采用 SEGGER Real Time Transfer (RTT) 技术，相比于 Universal Asynchronous Receiver/Transmitter (UART) 通讯， RTT 不需要占用额外的针脚，通过 J-Link 调试接口，即可实现 PC 和开发板的双向通信。
+
+\subsection{\href{https://infocenter.nordicsemi.com/index.jsp?topic=\%2Fug_gsg_keil\%2FUG\%2Fgsg\%2Ftest.html&cp=1_1_1_9}{测试嵌入式程序（Testing the application）}}
+
 
 %%%=== 参考文献 ========%%%
 \cleardoublepage\phantomsection
